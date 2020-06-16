@@ -89,7 +89,7 @@ $db = getdb($config);
       <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center text-black overflow-hidden col-md-5">
 
       <div class="my-3 py-3">
-        <h2 class="display-5">Your Database</h2>
+        <h2 class="display-5">Your Database - osnat</h2>
         <p class="lead">Overview of provenance-tagged relations</p>
       </div>
 
