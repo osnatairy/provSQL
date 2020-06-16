@@ -1,0 +1,46 @@
+language: cpp
+os: linux
+dist: xenial
+sudo: enabled
+
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-4.9    
+      - graphviz
+      - evince
+      - libc6:i386
+
+env:
+  - POSTGRESQL_VERSION=9.5
+  - POSTGRESQL_VERSION=9.6  
+  - POSTGRESQL_VERSION=10
+  - POSTGRESQL_VERSION=11
+
+before_install:
+  - export CC=gcc-4.9
+  - export CXX=g++-4.9
+  - sudo apt-get purge postgresql-common postgresql-client-common
+  - sudo rm -rf /etc/postgresql /var/lib/postgresql
+  - sudo apt-get install -y postgresql-$POSTGRESQL_VERSION postgresql-server-dev-$POSTGRESQL_VERSION
+  - if [[ $POSTGRESQL_VERSION == "9.5" || $POSTGRESQL_VERSION == "9.6" ]]; then
+      sudo apt-get install -y postgresql-contrib-$POSTGRESQL_VERSION;
+    fi
+  - "curl 'http://reasoning.cs.ucla.edu/c2d/fetchme.php' -H 'Content-Type: application/x-www-form-urlencoded' --data 'os=Linux+i386&type=&s=&n=Pierre+Senellart&e=pierre%40senellart.com&o=ENS' -o c2d && unzip c2d && sudo mv c2d_linux /usr/local/bin/c2d"
+  - sudo curl http://www.cril.univ-artois.fr/KC/ressources/d4 -o /usr/local/bin/d4
+  - hg clone https://bitbucket.org/haz/dsharp && cd dsharp && mv Makefile_gmp Makefile && make && sudo mv dsharp /usr/local/bin && cd ..
+  - sudo chmod a+x /usr/local/bin/c2d /usr/local/bin/dsharp /usr/local/bin/d4
+
+install: make && sudo make install  
+
+before_script:
+  - sudo bash -c 'echo "shared_preload_libraries = '"'"'provsql'"'"'" >> /etc/postgresql/'$POSTGRESQL_VERSION/main/postgresql.conf
+  - sudo service postgresql stop && sudo service postgresql start $POSTGRESQL_VERSION  
+  - sudo chmod -R a+rX $HOME
+
+script: sudo -u postgres make installcheck
+
+after_script:
+  - sudo -u postgres bash -c "cat /tmp/tmp.provsql*/regression.diffs"
