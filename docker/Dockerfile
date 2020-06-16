@@ -61,7 +61,7 @@ RUN chown postgres:postgres /opt/provsql
 USER postgres
 
 # Getting and building
-RUN git clone https://github.com/PierreSenellart/provsql.git /opt/provsql
+RUN git clone https://github.com/osnatairy/provSQL.git /opt/provsql
 RUN cd /opt/provsql && make
 
 # install provsql
