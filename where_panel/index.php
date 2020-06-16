@@ -23,7 +23,7 @@ $db = getdb($config);
 <!doctype html>
 <html>
   <head>
-    <title>Where Panel</title>
+    <title>Where Panel-osnat</title>
 
     <!-- Required meta tags -->
     <meta charset="utf-8">
